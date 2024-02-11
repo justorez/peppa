@@ -1,0 +1,7 @@
+{
+    "typescript.preferences.autoImportFileExcludePatterns": ["vue-router"],
+    "css.customData": [".vscode/tailwind.json"],
+    "editor.codeActionsOnSave": {
+        "source.fixAll": "explicit"
+    }
+}
