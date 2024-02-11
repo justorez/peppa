@@ -1,6 +1,6 @@
-# vite-vue-starter
+# 小猪佩奇学英语
 
-[![Deploy](https://github.com/justorez/vite-vue-starter/actions/workflows/deploy.yml/badge.svg)](https://github.com/ustorez/vite-vue-starter/actions/workflows/deploy.yml)
+[![deploy pages](https://github.com/justorez/peppa/actions/workflows/deploy.yml/badge.svg)](https://github.com/justorez/peppa/actions/workflows/deploy.yml)
 
 > Hurry up! Go dev.
 
