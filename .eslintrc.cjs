@@ -21,6 +21,7 @@ module.exports = {
         'prettier/prettier': 'warn',
         'no-unref': 'off',
         'no-undef': 'off',
+        '@typescript-eslint/no-unused-vars': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/explicit-function-return-type': 'off',
         'vue/html-indent': ['warn', 4],

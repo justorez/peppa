@@ -2,17 +2,14 @@
 name: deploy pages
 
 on:
-  workflow_dispatch:
-  # 仅在推送到默认分支时运行。
-  # push:
-  #   branches: main
-  #   paths:
-  #     - '*.cjs'
-  #     - '*.ts'
-  #     - 'src/**'
-
+  push:
+    branches: main
+    paths:
+      - '*.cjs'
+      - '*.ts'
+      - 'src/**'
   # 这个选项可以使你手动在 Action tab 页面触发工作流
-  # workflow_dispatch:
+  workflow_dispatch:
 
 # 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages。
 permissions:
@@ -41,7 +38,7 @@ jobs:
         with:
           version: 8
 
-      - name: Setup Node
+      - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -50,10 +47,12 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: pnpm run build
+      - name: Build and sync
+        run: |
+          pnpm run build
+          pnpm run sync:gitee
 
-      - name: Setup Pages
+      - name: Setup pages
         uses: actions/configure-pages@v3
 
       - name: Upload artifact
@@ -62,6 +61,6 @@ jobs:
           # Upload dist repository
           path: './dist'
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy to github pages
         id: deployment
         uses: actions/deploy-pages@v2

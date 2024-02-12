@@ -1,7 +1,16 @@
-# 小猪佩奇学英语
+# 挑战 52 天背完小猪佩奇
 
 [![deploy pages](https://github.com/justorez/peppa/actions/workflows/deploy.yml/badge.svg)](https://github.com/justorez/peppa/actions/workflows/deploy.yml)
 
-> Hurry up! Go dev.
+网站链接：[国内地址](https://justorez.gitee.io/peppa/) | [国外地址](https://justorez.github.io/peppa/)
 
-Vue3 + TS + Vue Router + Tailwind CSS + Daisy UI + Icones + Eruda
+一个 B 站英语学习教程的配套练习网站（友情提示：我不是 UP 主😊）。
+
+B 站视频地址：[脑洞部长 / 挑战52天背完小猪佩奇，进来一起卷！](https://space.bilibili.com/33291981/channel/collectiondetail?sid=525129&ctype=0)
+
+![](./resource/1.png)
+![](./resource/2.png)
+
+## TODO
+
+- [ ] 记录练习进度
