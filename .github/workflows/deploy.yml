@@ -48,9 +48,7 @@ jobs:
         run: pnpm install
 
       - name: Build and sync
-        run: |
-          pnpm run build
-          pnpm run sync:gitee
+        run: pnpm run build
 
       - name: Setup pages
         uses: actions/configure-pages@v3
