@@ -25,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "@vueuse/core": "^10.7.2",
     "buffer": "^6.0.3",
     "number-precision": "^1.6.0",
     "vue": "^3.3.11",

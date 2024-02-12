@@ -7,7 +7,6 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
-    HelloWorld: typeof import('./../src/components/HelloWorld.vue')['default']
     'IMdi:check': typeof import('~icons/mdi/check')['default']
     'IMdi:chevronLeft': typeof import('~icons/mdi/chevron-left')['default']
     'IMdi:chevronRight': typeof import('~icons/mdi/chevron-right')['default']

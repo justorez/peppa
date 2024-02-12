@@ -3,9 +3,7 @@ import data from '@/assets/data.json'
 import audioYesUrl from '/audio/yes.mp3'
 import audioNoUrl from '/audio/no.mp3'
 import { checkSentence } from '@/utils/index'
-
-const yesAudio = new Audio(audioYesUrl)
-const noAudio = new Audio(audioNoUrl)
+import { useLocalStorage } from '@vueuse/core'
 
 type Sentence = {
     CN: string
@@ -17,6 +15,9 @@ type Lines = {
     sentences: Sentence[]
 }
 
+const yesAudio = new Audio(audioYesUrl)
+const noAudio = new Audio(audioNoUrl)
+
 const route = useRoute()
 const router = useRouter()
 const back = () => router.back()
@@ -24,26 +25,39 @@ const back = () => router.back()
 const epNum = Number(route.query.i)
 const episode = ref<Lines>(data[epNum - 1] as Lines)
 const total = episode.value.sentences.length
+const completedList = useLocalStorage<boolean[]>(
+    `completedList-${epNum}`,
+    new Array(total).fill(false)
+)
 const page = reactive({
-    current: 1,
-    completed: new Array(total).fill(false),
+    // 当前页码：找到第一个未练习的句子
+    current: completedList.value.findIndex((x) => !x) + 1,
     total
 })
-const sentence = computed<Sentence>(
-    () => episode.value.sentences[page.current - 1]
-)
-const completed = computed(() => page.completed.filter((x) => x).length)
+const currentIndex = computed(() => page.current - 1)
+const sentence = computed(() => episode.value.sentences[currentIndex.value])
+// 已练习的个数
+const completed = computed(() => completedList.value.filter((x) => x).length)
 
 const input = ref('')
+watch(input, () => {
+    input.value = input.value.replace(/\n/g, '')
+})
 const checkDisabled = computed(() => !input.value)
 
 const showResult = ref(false)
 const result = ref(false)
 function check() {
+    if (checkDisabled.value) return
+    if (showResult.value && !result.value) {
+        restore()
+        return
+    }
+
     result.value = checkSentence(input.value, sentence.value.EN)
     showResult.value = true
     if (result.value) {
-        page.completed[page.current] = true
+        completedList.value[currentIndex.value] = true
         yesAudio.play()
     } else {
         noAudio.play()
@@ -56,9 +70,10 @@ function restore() {
 function next() {
     restore()
     input.value = ''
-    const current = page.current + 1
-    if (current <= page.total) {
-        page.current = current
+    for (let i = page.current; i < page.total; i++) {
+        if (completedList.value[i]) continue
+        page.current = i + 1
+        break
     }
 }
 </script>
@@ -67,7 +82,7 @@ function next() {
     <div class="vapp">
         <div class="flex items-center gap-2">
             <i-mdi:close
-                class="text-xl"
+                class="text-xl cursor-pointer"
                 @click="back"
             />
             <progress
@@ -102,11 +117,12 @@ function next() {
                     class="textarea textarea-bordered w-full text-lg bg-gray-50"
                     placeholder="请输入上述台词的英文"
                     rows="8"
+                    @keyup.enter.exact="check"
                 ></textarea>
             </div>
             <!-- <i-mdi:chevron-right class="text-2xl" /> -->
         </div>
-        <div class="mt-5 px-2 flex justify-between items-center">
+        <div class="mt-5 flex justify-between items-center">
             <div>
                 <input
                     v-model="page.current"
@@ -120,7 +136,7 @@ function next() {
             </div>
             <button
                 v-show="!showResult"
-                class="m-btn btn-neutral"
+                class="btn btn-neutral lg:w-32"
                 :disabled="checkDisabled"
                 @click="check"
             >
@@ -128,13 +144,13 @@ function next() {
             </button>
             <div v-show="showResult">
                 <button
-                    class="m-btn btn-outline mr-3"
+                    class="btn btn-outline lg:w-32 mr-3"
                     @click="restore"
                 >
                     取消
                 </button>
                 <button
-                    class="m-btn"
+                    class="btn lg:w-32"
                     :class="{
                         'btn-success': result,
                         'btn-error': !result
@@ -159,10 +175,6 @@ function next() {
 </template>
 
 <style lang="scss" scoped>
-.m-btn {
-    @apply btn lg:w-32;
-}
-
 .btn-bar {
     position: fixed;
     left: 0;
