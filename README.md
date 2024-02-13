@@ -9,8 +9,8 @@
 B 站视频地址：[脑洞部长 /《挑战52天背完小猪佩奇，进来一起卷！》](https://space.bilibili.com/33291981/channel/collectiondetail?sid=525129&ctype=0)
 
 <p align="center">
- <img src="./resource/1.png" width="80%"/>
- <img src="./resource/2.png" width="80%"/>
+ <img src="./resource/1.png" width="90%"/>
+ <img src="./resource/2.png" width="90%"/>
 </p>
 
 ## 待办事项
