@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import data from '@/assets/data.json'
-import audioYesUrl from '/audio/yes.mp3'
-import audioNoUrl from '/audio/no.mp3'
 import { checkSentence } from '@/utils/index'
 import { useLocalStorage } from '@vueuse/core'
+import { useAudio } from '@/utils/hooks'
 
 type Sentence = {
     CN: string
@@ -14,9 +13,6 @@ type Lines = {
     titleCN: string
     sentences: Sentence[]
 }
-
-const yesAudio = new Audio(audioYesUrl)
-const noAudio = new Audio(audioNoUrl)
 
 const route = useRoute()
 const router = useRouter()
@@ -31,7 +27,7 @@ const completedList = useLocalStorage<boolean[]>(
 )
 const page = reactive({
     // 当前页码：找到第一个未练习的句子
-    current: completedList.value.findIndex((x) => !x) + 1,
+    current: Math.max(1, completedList.value.findIndex((x) => !x) + 1),
     total
 })
 const currentIndex = computed(() => page.current - 1)
@@ -47,20 +43,19 @@ const checkDisabled = computed(() => !input.value)
 
 const showResult = ref(false)
 const result = ref(false)
+const audio = useAudio()
 function check() {
     if (checkDisabled.value) return
-    if (showResult.value && !result.value) {
-        restore()
-        return
-    }
+    if (showResult.value && !result.value) return restore()
+    if (showResult.value && result.value) return next()
 
     result.value = checkSentence(input.value, sentence.value.EN)
     showResult.value = true
     if (result.value) {
         completedList.value[currentIndex.value] = true
-        yesAudio.play()
+        audio.playYes()
     } else {
-        noAudio.play()
+        audio.playNo()
     }
 }
 function restore() {
@@ -175,6 +170,15 @@ function next() {
 </template>
 
 <style lang="scss" scoped>
+@supports not (color: oklch(0% 0% 0deg)) {
+    .btn[disabled],
+    .btn:disabled {
+        color: #b0b3b9;
+        background-color: #d5d6d9;
+        border-color: transparent;
+    }
+}
+
 .btn-bar {
     position: fixed;
     left: 0;
