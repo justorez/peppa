@@ -156,16 +156,6 @@ function next() {
                 </button>
             </div>
         </div>
-        <!-- <div class="btn-bar">
-            <button class="btn btn-outline">跳过</button>
-            <button
-                class="btn btn-neutral"
-                :disabled="checkDisabled"
-                @click="check"
-            >
-                检查
-            </button>
-        </div> -->
     </div>
 </template>
 
@@ -173,48 +163,13 @@ function next() {
 @supports not (color: oklch(0% 0% 0deg)) {
     .btn[disabled],
     .btn:disabled {
-        color: #b0b3b9;
-        background-color: #d5d6d9;
+        --fallback-n: rgba(43, 52, 64, 0.2);
+        --fallback-bc: rgba(31, 41, 55, 0.2);
         border-color: transparent;
     }
-}
 
-.btn-bar {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 2.5rem;
-    padding-bottom: 3.5rem;
-    border-top: 2px solid rgb(229, 229, 229);
-    background-color: white;
-    display: grid;
-    grid-gap: 8px 16px;
-    align-items: center;
-    grid-auto-rows: 1fr;
-    grid-template-columns: 100%;
-    justify-items: stretch;
-
-    > button {
-        width: 100%;
-    }
-}
-
-@media (min-width: 700px) {
-    .btn-bar {
-        align-items: center;
-        grid-auto-rows: auto;
-        grid-template-columns: repeat(5, 1fr);
-        grid-template-rows: 100%;
-        justify-content: space-between;
-
-        button:first-child {
-            justify-self: start;
-        }
-        button:last-child {
-            grid-column: 5 / auto;
-            justify-self: end;
-        }
+    .progress {
+        --fallback-bc: rgba(31, 41, 55, 0.2);
     }
 }
 </style>
