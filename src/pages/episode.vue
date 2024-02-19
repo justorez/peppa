@@ -1,58 +1,28 @@
 <script setup lang="ts">
-import data from '@/assets/data.json'
 import { checkSentence } from '@/utils/index'
-import { useLocalStorage } from '@vueuse/core'
-import { useAudio } from '@/utils/hooks'
-
-type Sentence = {
-    CN: string
-    EN: string
-}
-type Lines = {
-    titleEN: string
-    titleCN: string
-    sentences: Sentence[]
-}
+import { useAudio, usePage, useInput } from '@/hooks/episode'
 
 const route = useRoute()
 const router = useRouter()
 const back = () => router.back()
 
-const epNum = Number(route.query.i)
-const episode = ref<Lines>(data[epNum - 1] as Lines)
-const total = episode.value.sentences.length
-const completedList = useLocalStorage<boolean[]>(
-    `completedList-${epNum}`,
-    new Array(total).fill(false)
-)
-const page = reactive({
-    // 当前页码：找到第一个未练习的句子
-    current: Math.max(1, completedList.value.findIndex((x) => !x) + 1),
-    total
-})
-const currentIndex = computed(() => page.current - 1)
-const sentence = computed(() => episode.value.sentences[currentIndex.value])
-// 已练习的个数
-const completed = computed(() => completedList.value.filter((x) => x).length)
-
-const input = ref('')
-watch(input, () => {
-    input.value = input.value.replace(/\n/g, '')
-})
-const checkDisabled = computed(() => !input.value)
+const ep = Number(route.query.i)
+const { episode, sentence, page, completed, completedList, nextPage } =
+    usePage(ep)
+const { input, noInput } = useInput()
 
 const showResult = ref(false)
 const result = ref(false)
 const audio = useAudio()
 function check() {
-    if (checkDisabled.value) return
+    if (noInput.value) return
     if (showResult.value && !result.value) return restore()
     if (showResult.value && result.value) return next()
 
     result.value = checkSentence(input.value, sentence.value.EN)
     showResult.value = true
     if (result.value) {
-        completedList.value[currentIndex.value] = true
+        completedList.value[page.index] = true
         audio.playYes()
     } else {
         audio.playNo()
@@ -65,11 +35,7 @@ function restore() {
 function next() {
     restore()
     input.value = ''
-    for (let i = page.current; i < page.total; i++) {
-        if (completedList.value[i]) continue
-        page.current = i + 1
-        break
-    }
+    nextPage()
 }
 </script>
 
@@ -90,10 +56,20 @@ function next() {
         <div class="mt-5 flex justify-center items-center">
             <!-- <i-mdi:chevron-left class="text-2xl" /> -->
             <div class="px-2 flex-1">
-                <h1 class="font-bold text-2xl">
-                    第 {{ epNum }} 集：{{ episode.titleCN }}
+                <h1 class="font-bold text-2xl flex justify-between items-end">
+                    第 {{ ep }} 集：{{ episode.titleCN }}
                 </h1>
-                <div class="mt-5 mb-3 text-lg">“{{ sentence.CN }}”</div>
+                <div class="mt-5 mb-3 text-lg flex justify-between items-end">
+                    <span>“{{ sentence.CN }}”</span>
+                    <!-- <label class="label cursor-pointer p-0 items-end">
+                        <span class="label-text mr-3">跳过已完成</span>
+                        <input
+                            v-model="skip"
+                            type="checkbox"
+                            class="toggle"
+                        />
+                    </label> -->
+                </div>
                 <div
                     v-show="showResult"
                     class="mb-3 text-lg flex items-center"
@@ -132,7 +108,7 @@ function next() {
             <button
                 v-show="!showResult"
                 class="btn btn-neutral lg:w-32"
-                :disabled="checkDisabled"
+                :disabled="noInput"
                 @click="check"
             >
                 检查
@@ -170,6 +146,13 @@ function next() {
 
     .progress {
         --fallback-bc: rgba(31, 41, 55, 0.2);
+    }
+
+    .toggle {
+        color: rgba(31, 41, 55, 0.5);
+    }
+    .toggle:checked {
+        color: #1f2937;
     }
 }
 </style>
