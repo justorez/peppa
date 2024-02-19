@@ -9,6 +9,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     'IMdi:check': typeof import('~icons/mdi/check')['default']
     'IMdi:close': typeof import('~icons/mdi/close')['default']
+    'IMdi:volume': typeof import('~icons/mdi/volume')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

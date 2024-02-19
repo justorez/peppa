@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { checkSentence } from '@/utils/index'
-import { useAudio, usePage, useInput } from '@/hooks/episode'
+import { useAudio, usePage, useInput, useSpeech } from '@/hooks/episode'
 
 const route = useRoute()
 const router = useRouter()
@@ -10,6 +10,7 @@ const ep = Number(route.query.i)
 const { episode, sentence, page, completed, completedList, nextPage } =
     usePage(ep)
 const { input, noInput } = useInput()
+const { speak, supported: speechSupported } = useSpeech()
 
 const showResult = ref(false)
 const result = ref(false)
@@ -60,7 +61,16 @@ function next() {
                     第 {{ ep }} 集：{{ episode.titleCN }}
                 </h1>
                 <div class="mt-5 mb-3 text-lg flex justify-between items-end">
-                    <span>“{{ sentence.CN }}”</span>
+                    <div class="flex items-center gap-2">
+                        <button
+                            v-if="speechSupported"
+                            class="btn btn-circle btn-sm"
+                            @click="speak(sentence.EN)"
+                        >
+                            <i-mdi:volume />
+                        </button>
+                        <span>“{{ sentence.CN }}”</span>
+                    </div>
                     <!-- <label class="label cursor-pointer p-0 items-end">
                         <span class="label-text mr-3">跳过已完成</span>
                         <input

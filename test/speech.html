@@ -1,0 +1,36 @@
+<select id="voiceSelect"></select>
+<button onclick="play()">play</button>
+<script>
+    let voices = []
+    const voiceSelect = document.querySelector('#voiceSelect')
+    speechSynthesis.onvoiceschanged = populateVoiceList
+
+    function populateVoiceList() {
+        if (typeof speechSynthesis === 'undefined') {
+            return
+        }
+        voiceSelect.innerHTML = ''
+        voices = speechSynthesis.getVoices().filter((v) => v.lang === 'en-US')
+        for (const voice of voices) {
+            var option = document.createElement('option')
+            option.textContent = voice.name + ' (' + voice.lang + ')'
+            if (voice.default) {
+                option.textContent += ' -- DEFAULT'
+            }
+            option.setAttribute('data-lang', voice.lang)
+            option.setAttribute('data-name', voice.name)
+            voiceSelect.appendChild(option)
+        }
+    }
+    
+    async function play() {
+        const synth = window.speechSynthesis
+        const textToSpeak = new SpeechSynthesisUtterance(
+            'So, peppa and george cannot play outside.'
+        )
+        const option = voiceSelect.selectedOptions[0]
+        textToSpeak.voice = voices.find(v => v.name === option.dataset.name)
+        textToSpeak.lang = 'en-US'
+        synth.speak(textToSpeak)
+    }
+</script>

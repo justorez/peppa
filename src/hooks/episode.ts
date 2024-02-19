@@ -21,7 +21,7 @@ export function usePage(ep: number) {
         new Array(total).fill(false)
     )
 
-    // TODO 开关：是否跳过已练习的句子
+    // TODO 开关：跳过已练习的句子
     const skip = useLocalStorage('skip', false)
 
     // const index = ref(skip.value ? completedList.value.findIndex((x) => !x) : 0)
@@ -72,5 +72,27 @@ export function useAudio() {
     return {
         playYes: () => yesAudio.play(),
         playNo: () => noAudio.play()
+    }
+}
+
+export function useSpeech() {
+    if (window.speechSynthesis) {
+        const synth = window.speechSynthesis
+
+        let voices = synth.getVoices().filter((v) => v.lang === 'en-US')
+        synth.onvoiceschanged = () => {
+            voices = synth.getVoices().filter((v) => v.lang === 'en-US')
+        }
+
+        const speak = (text: string) => {
+            const utterance = new SpeechSynthesisUtterance(text)
+            utterance.voice =
+                voices.find((v) => v.name.includes('Emma')) || null
+            utterance.lang = 'en-US'
+            synth.speak(utterance)
+        }
+        return { supported: true, speak }
+    } else {
+        return { supported: false, speak: (text: string) => text }
     }
 }
