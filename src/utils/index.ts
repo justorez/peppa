@@ -1,4 +1,4 @@
-export function checkSentence(input: string, answer: string) {
+export function equalSentence(input: string, answer: string) {
     input = input
         .replace(/[.,?!]/g, ' ')
         .split(/\s+/)

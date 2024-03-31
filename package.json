@@ -11,8 +11,6 @@
     "sync:gitee": "node scripts/gitee.js",
     "lint": "eslint --ignore-path .gitignore .",
     "lint:fix": "eslint --fix --ignore-path .gitignore .",
-    "changelog": "conventional-changelog -p angular -t v -i CHANGELOG.md -s",
-    "release": "node scripts/release.js",
     "commit": "pnpm exec cz"
   },
   "simple-git-hooks": {

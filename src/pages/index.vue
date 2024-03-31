@@ -14,7 +14,6 @@ function getProgress(i: number) {
 
 <template>
     <div class="vapp entrance-list">
-        <!-- style="flex-basis: calc(16.66% - 0.9rem); min-width: 90px" -->
         <RouterLink
             v-for="i in 52"
             :key="i"

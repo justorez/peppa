@@ -24,8 +24,7 @@ export default defineConfig({
         // https://npmmirror.com/package/unplugin-vue-router
         VueRouter({
             routesFolder: [{ src: 'src/pages' }],
-            dts: 'types/typed-router.d.ts',
-            extensions: ['.vue']
+            dts: 'types/typed-router.d.ts'
         }),
 
         // Vue must be placed after VueRouter()

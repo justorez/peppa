@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { checkSentence } from '@/utils/index'
-import { useAudio, usePage, useInput, useSpeech } from '@/hooks/episode'
+import { equalSentence } from '@/utils/index'
+import { useAudio, usePage, useInput, useSpeech } from '@/composables/episode'
 
 const route = useRoute()
 const router = useRouter()
@@ -20,7 +20,7 @@ function check() {
     if (showResult.value && !result.value) return restore()
     if (showResult.value && result.value) return next()
 
-    result.value = checkSentence(input.value, sentence.value.EN)
+    result.value = equalSentence(input.value, sentence.value.EN)
     showResult.value = true
     if (result.value) {
         completedList.value[page.index] = true
@@ -55,7 +55,6 @@ function next() {
             <span>{{ completed }}/{{ episode.sentences.length }}</span>
         </div>
         <div class="mt-5 flex justify-center items-center">
-            <!-- <i-mdi:chevron-left class="text-2xl" /> -->
             <div class="px-2 flex-1">
                 <h1 class="font-bold text-2xl flex justify-between items-end">
                     第 {{ ep }} 集：{{ episode.titleCN }}
@@ -101,7 +100,6 @@ function next() {
                     @keyup.enter.exact="check"
                 ></textarea>
             </div>
-            <!-- <i-mdi:chevron-right class="text-2xl" /> -->
         </div>
         <div class="mt-5 flex justify-between items-center">
             <div>
