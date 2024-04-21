@@ -11,7 +11,7 @@ const ep = computed(() => Number((route.params as EpisodeRouteParams).ep))
 const { input, noInput } = useInput()
 const { check: checkSentence } = useCheck()
 const { speak, isSupported: isSpeechSupported } = useSpeech()
-const { title, sentence, page, nextPage, markPage } = usePage(ep)
+const { epNum, title, sentence, page, nextPage, markPage } = usePage(ep)
 
 const result = ref(false)
 const showResult = ref(false)
@@ -34,7 +34,7 @@ function restore() {
 function next() {
     restore()
     if (page.isLast) {
-        router.replace(`/episode/${ep.value + 1}`)
+        router.replace(`/episode/${epNum.value + 1}`)
     } else {
         nextPage()
     }
@@ -58,7 +58,7 @@ function next() {
         <div class="mt-5 flex justify-center items-center">
             <div class="px-2 flex-1">
                 <h1 class="font-bold text-2xl flex justify-between items-end">
-                    第 {{ ep }} 集：{{ title }}
+                    第 {{ epNum }} 集：{{ title }}
                 </h1>
                 <div class="mt-5 mb-3 text-lg flex justify-between items-end">
                     <div class="flex items-center gap-2">

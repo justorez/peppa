@@ -3,17 +3,22 @@ import audioNoUrl from '/audio/no.mp3'
 import EpisodeData from '@/assets/data.json'
 
 export function usePage(ep: Ref<number>) {
-    const episode = computed(() => EpisodeData[ep.value - 1])
-    const total = episode.value.sentences.length
-    const progressKey = computed(() => `completedList-${ep.value}`)
+    const epNum = computed(() =>
+        Math.min(Math.max(1, ep.value), EpisodeData.length)
+    )
+    const episode = computed(() => EpisodeData[epNum.value - 1])
+    const total = computed(() => episode.value.sentences.length)
 
     // progress
     // reactive path: ep -> progresslist -> localStorage
     // the above feature cannot be implemented with @vueuse,
     // so I made a reactive storage by myself
+    const progressKey = computed(() => `completedList-${epNum.value}`)
     const loadProgress = (): number[] => {
         const dataStr = localStorage.getItem(progressKey.value)
-        let data = !dataStr ? new Array(total).fill(0) : JSON.parse(dataStr)
+        let data = !dataStr
+            ? new Array(total.value).fill(0)
+            : JSON.parse(dataStr)
         data = data.map((d: number | boolean) => Number(d))
         if (/true|false/.test(dataStr || '')) {
             localStorage.setItem(progressKey.value, JSON.stringify(data))
@@ -35,7 +40,7 @@ export function usePage(ep: Ref<number>) {
     // start index
     const getStartIndex = () => {
         const index = progressList.value.findIndex((x) => !x)
-        return index !== -1 ? index : total - 1
+        return index !== -1 ? index : total.value - 1
     }
     const index = ref(getStartIndex())
     watch(progressList, () => {
@@ -51,7 +56,7 @@ export function usePage(ep: Ref<number>) {
         current, // min value 1
         total,
         completed: computed(() => progressList.value.filter((x) => x).length),
-        isLast: computed(() => current.value === total)
+        isLast: computed(() => current.value === total.value)
     })
 
     function nextPage(n?: number) {
@@ -69,6 +74,7 @@ export function usePage(ep: Ref<number>) {
     const sentence = computed(() => episode.value.sentences[page.index])
 
     return {
+        epNum,
         title: episode.value.titleCN,
         page,
         sentence,
