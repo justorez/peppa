@@ -6,10 +6,7 @@ import './style.scss'
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
     extendRoutes(routes) {
-        // routes.push({
-        //     path: '/',
-        //     redirect: '/xxx'
-        // })
+        // add somethings
         return routes
     }
 })

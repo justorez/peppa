@@ -1,42 +1,43 @@
 <script setup lang="ts">
-import { equalSentence } from '@/utils/index'
-import { useAudio, usePage, useInput, useSpeech } from '@/composables/episode'
+import { EpisodeRouteParams } from '@/types/episode'
+import { usePage, useInput, useSpeech, useCheck } from '@/composables/episode'
 
 const route = useRoute()
 const router = useRouter()
 const back = () => router.back()
 
-const ep = Number(route.query.i)
-const { episode, sentence, page, completed, completedList, nextPage } =
-    usePage(ep)
-const { input, noInput } = useInput()
-const { speak, supported: speechSupported } = useSpeech()
+const ep = computed(() => Number((route.params as EpisodeRouteParams).ep))
 
-const showResult = ref(false)
+const { input, noInput } = useInput()
+const { check: checkSentence } = useCheck()
+const { speak, isSupported: isSpeechSupported } = useSpeech()
+const { title, sentence, page, nextPage, markPage } = usePage(ep)
+
 const result = ref(false)
-const audio = useAudio()
+const showResult = ref(false)
+const nextButtonText = computed(() => (page.isLast ? '下一集' : '继续'))
+
 function check() {
     if (noInput.value) return
     if (showResult.value && !result.value) return restore()
     if (showResult.value && result.value) return next()
 
-    result.value = equalSentence(input.value, sentence.value.EN)
+    result.value = checkSentence(input.value, sentence.value.EN)
     showResult.value = true
-    if (result.value) {
-        completedList.value[page.index] = true
-        audio.playYes()
-    } else {
-        audio.playNo()
-    }
+    markPage(result.value)
 }
 function restore() {
-    showResult.value = false
+    input.value = ''
     result.value = false
+    showResult.value = false
 }
 function next() {
     restore()
-    input.value = ''
-    nextPage()
+    if (page.isLast) {
+        router.replace(`/episode/${ep.value + 1}`)
+    } else {
+        nextPage()
+    }
 }
 </script>
 
@@ -49,20 +50,20 @@ function next() {
             />
             <progress
                 class="progress progress-success flex-1 h-4"
-                :value="completed"
+                :value="page.completed"
                 :max="page.total"
             ></progress>
-            <span>{{ completed }}/{{ episode.sentences.length }}</span>
+            <span>{{ page.completed }}/{{ page.total }}</span>
         </div>
         <div class="mt-5 flex justify-center items-center">
             <div class="px-2 flex-1">
                 <h1 class="font-bold text-2xl flex justify-between items-end">
-                    第 {{ ep }} 集：{{ episode.titleCN }}
+                    第 {{ ep }} 集：{{ title }}
                 </h1>
                 <div class="mt-5 mb-3 text-lg flex justify-between items-end">
                     <div class="flex items-center gap-2">
                         <button
-                            v-if="speechSupported"
+                            v-if="isSpeechSupported"
                             class="btn btn-circle btn-sm"
                             @click="speak(sentence.EN)"
                         >
@@ -70,14 +71,6 @@ function next() {
                         </button>
                         <span>“{{ sentence.CN }}”</span>
                     </div>
-                    <!-- <label class="label cursor-pointer p-0 items-end">
-                        <span class="label-text mr-3">跳过已完成</span>
-                        <input
-                            v-model="skip"
-                            type="checkbox"
-                            class="toggle"
-                        />
-                    </label> -->
                 </div>
                 <div
                     v-show="showResult"
@@ -126,7 +119,7 @@ function next() {
                     class="btn btn-outline lg:w-32 mr-3"
                     @click="restore"
                 >
-                    取消
+                    重试
                 </button>
                 <button
                     class="btn lg:w-32"
@@ -136,7 +129,7 @@ function next() {
                     }"
                     @click="next"
                 >
-                    继续
+                    {{ nextButtonText }}
                 </button>
             </div>
         </div>

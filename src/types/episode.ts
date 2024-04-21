@@ -8,3 +8,7 @@ export type Episode = {
     titleCN: string
     sentences: Sentence[]
 }
+
+export type EpisodeRouteParams = {
+    ep: string
+}

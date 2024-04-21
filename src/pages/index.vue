@@ -2,9 +2,9 @@
 function getProgress(i: number) {
     const str = localStorage.getItem(`completedList-${i}`)
     if (str) {
-        const completedList = JSON.parse(str) as boolean[]
+        const progressList = JSON.parse(str) as boolean[]
         const progress =
-            (completedList.filter((x) => x).length / completedList.length) * 100
+            (progressList.filter((x) => x).length / progressList.length) * 100
         return `${progress}%`
     } else {
         return 0
@@ -17,7 +17,7 @@ function getProgress(i: number) {
         <RouterLink
             v-for="i in 52"
             :key="i"
-            :to="`/episode?i=${i}`"
+            :to="`/episode/${i}`"
             style="min-width: 5.625rem"
         >
             <button class="w-full h-16 btn btn-neutral btn-outline">
