@@ -12,7 +12,6 @@ export function usePage(ep: Ref<number>) {
     // progress
     // reactive path: ep -> progresslist -> localStorage
     // the above feature cannot be implemented with @vueuse,
-    // so I made a reactive storage by myself
     const progressKey = computed(() => `completedList-${epNum.value}`)
     const loadProgress = (): number[] => {
         const dataStr = localStorage.getItem(progressKey.value)
