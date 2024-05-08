@@ -2,7 +2,7 @@
 
 [![deploy pages](https://github.com/justorez/peppa/actions/workflows/deploy.yml/badge.svg)](https://github.com/justorez/peppa/actions/workflows/deploy.yml)
 
-网站链接：[国内地址](https://justorez.gitee.io/peppa/) | [国外地址](https://justorez.github.io/peppa/)
+网站链接：[Github Page](https://justorez.github.io/peppa/)
 
 <p align="left">
  <img src="./resource/qrcode.jpg" width="220"/>
