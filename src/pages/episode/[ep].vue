@@ -96,6 +96,22 @@ function next() {
         </div>
         <div class="mt-5 flex justify-between items-center">
             <div>
+                <button
+                    class="btn btn-outline"
+                    :disabled="page.current <= 1"
+                    @click="page.current--"
+                >
+                    上一页
+                </button>
+                &nbsp;&nbsp;&nbsp;
+                <button
+                    class="btn btn-outline"
+                    :disabled="page.current >= page.total"
+                    @click="page.current++"
+                >
+                    下一页
+                </button>
+                &nbsp;&nbsp;&nbsp;
                 <input
                     v-model="page.current"
                     type="number"
